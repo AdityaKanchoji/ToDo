@@ -27,4 +27,18 @@ def new_task(request: Request):
    if get_loggedin_user(request):
       return templates.TemplateResponse("new_task.html", {"request": request})
    
+@router.post("/task/new")
+def new_task(request: Request, taskTitle = Form(...), description = Form(...), status = Form(...)):
+   user = get_loggedin_user(request)
+   if user:
+      user_id = user.id
+      result = db.table('tasks').insert({
+         'title': taskTitle,
+         'description': description,
+         'status': status,
+         'user_id': user_id
+      }).execute()
+
+      return templates.TemplateResponse('task_success.html', {"request": request})
+   
    
